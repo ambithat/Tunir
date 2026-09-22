@@ -1,0 +1,41 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        location
+
+        COLUMNS:
+        location_id, location_name, location_type, is_active, created_at
+        
+
+RELATIONS:
+approval_order.created_at ↔ location.created_at
+employee.created_at ↔ location.created_at
+employee.is_active ↔ location.is_active
+categories.created_at ↔ location.created_at
+categories.is_active ↔ location.is_active
+location.created_at ↔ products.created_at
+location.is_active ↔ products.is_active
+location.created_at ↔ permissions.created_at
+location.created_at ↔ parts.created_at
+location.is_active ↔ parts.is_active
+location.created_at ↔ users.created_at
+location.is_active ↔ users.is_active
+location.created_at ↔ sale_orders.created_at
+location.location_id ↔ sale_orders.location_id
+location.created_at ↔ sale_order_items.created_at

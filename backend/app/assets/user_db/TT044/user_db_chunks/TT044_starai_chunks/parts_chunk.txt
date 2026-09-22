@@ -1,0 +1,46 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        parts
+
+        COLUMNS:
+        part_id, part_number, part_name, category_id, unit_price, unit_of_measure, asset_prefix, is_asset_type, created_at, updated_at, is_active
+        
+
+RELATIONS:
+approval_order.created_at ↔ parts.created_at
+employee.created_at ↔ parts.created_at
+employee.is_active ↔ parts.is_active
+categories.created_at ↔ parts.created_at
+categories.is_active ↔ parts.is_active
+categories.category_id ↔ parts.category_id
+location.created_at ↔ parts.created_at
+location.is_active ↔ parts.is_active
+products.created_at ↔ parts.created_at
+products.is_active ↔ parts.is_active
+permissions.created_at ↔ parts.created_at
+parts.created_at ↔ users.created_at
+parts.is_active ↔ users.is_active
+parts.created_at ↔ sale_orders.created_at
+parts.unit_price ↔ sale_orders.unit_price
+parts.updated_at ↔ sale_orders.updated_at
+parts.created_at ↔ sale_order_items.created_at
+parts.unit_price ↔ sale_order_items.unit_price
+parts.part_id ↔ sale_order_items.part_id
+parts.updated_at ↔ sale_order_items.updated_at

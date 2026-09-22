@@ -1,0 +1,3 @@
+
+class LoginHistoryException(Exception):
+    pass

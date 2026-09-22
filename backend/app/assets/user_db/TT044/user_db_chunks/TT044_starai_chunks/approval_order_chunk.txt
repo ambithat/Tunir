@@ -1,0 +1,37 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        approval_order
+
+        COLUMNS:
+        level, designation, approval_type, created_at, description
+        
+
+RELATIONS:
+approval_order.created_at ↔ employee.created_at
+approval_order.created_at ↔ categories.created_at
+approval_order.created_at ↔ location.created_at
+approval_order.created_at ↔ products.created_at
+approval_order.created_at ↔ permissions.created_at
+approval_order.level ↔ permissions.level
+approval_order.created_at ↔ parts.created_at
+approval_order.created_at ↔ users.created_at
+approval_order.level ↔ users.level
+approval_order.created_at ↔ sale_orders.created_at
+approval_order.created_at ↔ sale_order_items.created_at

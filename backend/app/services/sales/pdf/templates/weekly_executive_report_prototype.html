@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Executive Pipeline Report - Senior Board Edition</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ================= PRINT & A4 SETUP ================= */
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+      @bottom-left {
+        content: "🔒 CONFIDENTIAL EXECUTIVE BOARD BRIEFING";
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #94a3b8;
+        letter-spacing: 0.8px;
+        font-weight: 700;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f172a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1e293b;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 30px 0;
+    }
+
+    .document-page {
+      background-color: #ffffff;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 16mm;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+      position: relative;
+    }
+
+    @media print {
+      body { background-color: #ffffff; padding: 0; }
+      .document-page {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .page-break { page-break-before: always; }
+      .avoid-break { page-break-inside: avoid; }
+    }
+
+    /* ================= MASTHEAD & BANNER ================= */
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+      color: white;
+      padding: 22px 28px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .masthead::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(37,99,235,0.3) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+    .masthead-left .kicker {
+      font-size: 8.5pt;
+      font-weight: 800;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .masthead-left h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22pt;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .masthead-right {
+      text-align: right;
+      font-size: 8.5pt;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .masthead-right strong {
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    /* ================= TOP METRICS KPI SCORECARD ================= */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .kpi-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+    .kpi-pipeline::before { background: #2563eb; }
+    .kpi-won::before { background: #059669; }
+    .kpi-pending::before { background: #ea580c; }
+    .kpi-overdue::before { background: #dc2626; }
+
+    .kpi-card .kpi-label {
+      font-size: 7.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .kpi-card .kpi-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+    .kpi-card .kpi-subtext {
+      font-size: 7.5pt;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* ================= EXECUTIVE SUMMARY TABLE ================= */
+    .summary-section {
+      margin-bottom: 30px;
+    }
+    .summary-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #0f172a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .summary-title::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #0f172a 0%, #cbd5e1 100%);
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 8.5pt;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .summary-table th {
+      background: #0f172a;
+      color: #f8fafc;
+      text-transform: uppercase;
+      font-size: 7.5pt;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 11px 14px;
+      text-align: left;
+    }
+    .summary-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      background: #ffffff;
+    }
+    
+    /* Top border separation for each Executive Block */
+    .executive-border-top td {
+      border-top: 2.5px solid #0f172a;
+    }
+
+    .product-row-bg td {
+      background: #f8fafc;
+    }
+
+    /* Executive Info Cell Component */
+    .executive-card-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 2px;
+    }
+    .executive-name-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10.5pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .executive-role-text {
+      font-size: 7.5pt;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* SLEEK EXECUTIVE PAGE NAVIGATION PILL BADGE */
+    .page-nav-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 1.5px solid #3b82f6;
+      color: #ffffff !important;
+      text-decoration: none;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 8.5pt;
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.25);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+
+    .page-nav-badge:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-color: #60a5fa;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .pg-num {
+      color: #60a5fa;
+      font-weight: 900;
+      font-size: 8pt;
+      letter-spacing: 1px;
+    }
+    .page-nav-badge:hover .pg-num {
+      color: #ffffff;
+    }
+
+    .pg-arrow {
+      font-size: 9pt;
+      color: #ffffff;
+      transition: transform 0.2s ease;
+    }
+    .page-nav-badge:hover .pg-arrow {
+      transform: translate(2px, -2px);
+    }
+
+    /* Product Chip Badge */
+    .product-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 8.5pt;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Enhanced Task Item Card */
+    .task-item-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .task-item-pending {
+      border-left: 3.5px solid #ea580c;
+    }
+    .task-item-overdue {
+      border-left: 3.5px solid #dc2626;
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+    .task-item-completed {
+      border-left: 3.5px solid #16a34a;
+      background: #f0fdf4;
+    }
+
+    .task-title {
+      font-weight: 800;
+      font-size: 8.5pt;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .task-meta {
+      font-size: 7.5pt;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .badge-mini-overdue {
+      background: #dc2626;
+      color: white;
+      font-size: 6.5pt;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Outcome Pills */
+    .outcome-pill-won {
+      display: inline-block;
+      background: #d1fae5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      font-weight: 800;
+      font-size: 7.5pt;
+      padding: 4px 8px;
+      border-radius: 5px;
+      margin-bottom: 4px;
+    }
+    .outcome-pill-lost {
+      display: inline-block;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      font-weight: 800;
+      font-size: 7.5pt;
+      padding: 4px 8px;
+      border-radius: 5px;
+    }
+
+    /* ================= USER DETAILED SECTIONS ================= */
+    .user-section { 
+      margin-bottom: 35px; 
+      scroll-margin-top: 20px; 
+    }
+    .user-header {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .user-initials {
+      background: #ffffff;
+      color: #0f172a;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 14pt;
+      margin-right: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .user-details h2 { 
+      color: white; 
+      font-family: 'Outfit', sans-serif;
+      font-size: 16pt; 
+      margin: 0; 
+      letter-spacing: 0.3px; 
+    }
+    .user-details span { 
+      font-size: 8pt; 
+      color: #94a3b8;
+      text-transform: uppercase; 
+      letter-spacing: 1.5px; 
+      font-weight: 700;
+    }
+
+    /* ================= PRODUCT HIGHLIGHT ================= */
+    .product-group {
+      margin-left: 10px;
+      margin-bottom: 30px;
+      padding-left: 18px;
+      border-left: 3px solid #cbd5e1;
+    }
+    .product-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12pt;
+      font-weight: 800;
+      color: #1e293b;
+      background: #f1f5f9;
+      padding: 10px 16px;
+      border-left: 6px solid #2563eb;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ================= DATA BLOCKS ================= */
+    .data-block {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .block-header {
+      padding: 9px 16px;
+      font-size: 8.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-leads { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+    .header-pending { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
+    .header-completed { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); }
+
+    /* ================= TABLES ================= */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    th {
+      text-align: left;
+      padding: 9px 14px;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 7.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    
+    tbody tr:nth-child(even):not(.overdue-row) { background-color: #f8fafc; }
+    
+    .lead-name { font-weight: 800; color: #0f172a; font-size: 9.5pt; }
+    .lead-id { display: block; font-size: 7.5pt; color: #64748b; font-family: monospace; margin-top: 3px; letter-spacing: 0.5px;}
+
+    .stage-from { color: #94a3b8; font-size: 8.5pt; }
+    .stage-to { color: #0f172a; font-weight: 800; font-size: 9.5pt; }
+    .status-arrow { color: #cbd5e1; margin: 0 4px; font-weight: bold; }
+    .date-subtext { display: block; font-size: 7.5pt; color: #64748b; margin-top: 4px; font-weight: 600; text-transform: uppercase; }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 7.5pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: white;
+    }
+    .pill-won { background: #059669; }
+    .pill-lost { background: #dc2626; }
+    .pill-active { background: #2563eb; }
+    
+    .overdue-row td { background-color: #fef2f2 !important; border-bottom: 1px solid #fecaca; }
+    .overdue-badge {
+      display: inline-block;
+      background: #dc2626;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 7pt;
+      font-weight: 800;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+    .overdue-text { color: #b91c1c; font-weight: 800; }
+    
+    .empty-state {
+      padding: 16px;
+      text-align: center;
+      font-size: 8.5pt;
+      font-style: italic;
+      color: #64748b;
+      background: #f8fafc;
+    }
+
+    /* Footer Sign-off Box */
+    .board-footer-box {
+      margin-top: 40px;
+      padding: 16px 20px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8pt;
+      color: #64748b;
+    }
+    .board-footer-box strong { color: #0f172a; }
+  </style>
+</head>
+<body>
+
+<div class="document-page">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-left">
+      <div class="kicker">⚡ Star AI Sales Intelligence</div>
+      <h1>Weekly Executive Pipeline Report</h1>
+    </div>
+    <div class="masthead-right">
+      <div>Reporting Period: <strong>Aug 18 – Aug 24, 2026</strong></div>
+      <div>Issued Date: <strong>Aug 27, 2026</strong></div>
+      <div>Scope: <strong>Global Sales & Pipeline Activity</strong></div>
+    </div>
+  </div>
+
+  <!-- KPI SCORECARD -->
+  <div class="kpi-grid avoid-break">
+    <div class="kpi-card kpi-pipeline">
+      <div class="kpi-label">Active Pipeline Value</div>
+      <div class="kpi-value">₹298,700</div>
+      <div class="kpi-subtext">Across 6 Active Accounts</div>
+    </div>
+    <div class="kpi-card kpi-won">
+      <div class="kpi-label">Deals Closed Won</div>
+      <div class="kpi-value">₹191,700</div>
+      <div class="kpi-subtext">3 New Logos Signed</div>
+    </div>
+    <div class="kpi-card kpi-pending">
+      <div class="kpi-label">Pending Tasks</div>
+      <div class="kpi-value">11 Tasks</div>
+      <div class="kpi-subtext">3 Account Executives</div>
+    </div>
+    <div class="kpi-card kpi-overdue">
+      <div class="kpi-label">Overdue Alerts</div>
+      <div class="kpi-value">4 Overdue</div>
+      <div class="kpi-subtext">Action Required &gt; 24h</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY OVERVIEW TABLE (SLEEK PAGE BADGES) -->
+  <div class="summary-section avoid-break">
+    <div class="summary-title">📌 Executive & Product Level Performance Overview</div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th width="10%" style="text-align: center;">Page No</th>
+          <th width="18%">Executive Name</th>
+          <th width="14%">Product</th>
+          <th width="27%">Pending Tasks</th>
+          <th width="19%">Completed Tasks</th>
+          <th width="12%">Won / Lost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Executive 1: Vinod Handi (Page 1 Target) -->
+        <tr class="executive-border-top">
+          <td rowspan="2" style="vertical-align: top; text-align: center; padding-top: 14px;">
+            <a href="#user-vinod-handi" class="page-nav-badge" title="Navigate to Page 1 Details">
+              <span class="pg-num">PAGE 01</span>
+              <span class="pg-arrow">↗</span>
+            </a>
+          </td>
+          <td rowspan="2" style="vertical-align: top; padding-top: 14px;">
+            <div class="executive-card-box">
+              <span class="executive-name-text">Vinod Handi</span>
+              <span class="executive-role-text">Account Executive</span>
+            </div>
+          </td>
+          <td><span class="product-chip">📦 Meglan</span></td>
+          <td>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Technical Demo</div>
+              <div class="task-meta">Arden Health • Due Aug 30</div>
+            </div>
+            <div class="task-item-card task-item-overdue">
+              <div class="task-title">
+                <span class="overdue-text">Discovery Call</span>
+                <span class="badge-mini-overdue">OVERDUE</span>
+              </div>
+              <div class="task-meta overdue-text">Fenwick & Rowe • Due Aug 19</div>
+            </div>
+          </td>
+          <td>
+            <span style="color: #94a3b8; font-style: italic; font-size: 7.5pt;">None</span>
+          </td>
+          <td>
+            <span style="color: #94a3b8; font-style: italic; font-size: 7.5pt;">In Progress</span>
+          </td>
+        </tr>
+        <tr class="product-row-bg">
+          <td><span class="product-chip">📦 EBM</span></td>
+          <td>
+            <div class="task-item-card task-item-overdue">
+              <div class="task-title">
+                <span class="overdue-text">Follow-up Call</span>
+                <span class="badge-mini-overdue">OVERDUE</span>
+              </div>
+              <div class="task-meta overdue-text">Meridian Logistics • Due Aug 25</div>
+            </div>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Proposal Review</div>
+              <div class="task-meta">Crestline Mfg • Due Sept 02</div>
+            </div>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Contract Redline</div>
+              <div class="task-meta">Alderwood Financial • Due Aug 31</div>
+            </div>
+          </td>
+          <td>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Contract Signing</div>
+              <div class="task-meta">Northgate Retail • Done Aug 22</div>
+            </div>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Loss Review Call</div>
+              <div class="task-meta">Baywater Freight • Done Aug 23</div>
+            </div>
+          </td>
+          <td>
+            <span class="outcome-pill-won">🏆 Won: Northgate ($84k)</span>
+            <span class="outcome-pill-lost">❌ Lost: Baywater</span>
+          </td>
+        </tr>
+
+        <!-- Executive 2: Kaushik (Page 2 Target) -->
+        <tr class="executive-border-top">
+          <td rowspan="2" style="vertical-align: top; text-align: center; padding-top: 14px;">
+            <a href="#user-kaushik" class="page-nav-badge" title="Navigate to Page 2 Details">
+              <span class="pg-num">PAGE 02</span>
+              <span class="pg-arrow">↗</span>
+            </a>
+          </td>
+          <td rowspan="2" style="vertical-align: top; padding-top: 14px;">
+            <div class="executive-card-box">
+              <span class="executive-name-text">Kaushik</span>
+              <span class="executive-role-text">Account Executive</span>
+            </div>
+          </td>
+          <td><span class="product-chip">📦 Spica</span></td>
+          <td>
+            <div class="task-item-card task-item-overdue">
+              <div class="task-title">
+                <span class="overdue-text">Technical Deep-Dive</span>
+                <span class="badge-mini-overdue">OVERDUE</span>
+              </div>
+              <div class="task-meta overdue-text">Falcon Ridge • Due Aug 20</div>
+            </div>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Renewal Discussion</div>
+              <div class="task-meta">Hartwell & Co. • Due Sept 05</div>
+            </div>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Onboarding Call</div>
+              <div class="task-meta">Solstice Media • Due Aug 29</div>
+            </div>
+          </td>
+          <td>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Check-in Call</div>
+              <div class="task-meta">Hartwell & Co. • Done Aug 21</div>
+            </div>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Contract Signing</div>
+              <div class="task-meta">Solstice Media • Done Aug 23</div>
+            </div>
+          </td>
+          <td>
+            <span class="outcome-pill-won">🏆 Won: Solstice ($46.5k)</span>
+          </td>
+        </tr>
+        <tr class="product-row-bg">
+          <td><span class="product-chip">📦 STAR AI</span></td>
+          <td>
+            <span style="color: #94a3b8; font-style: italic; font-size: 7.5pt;">None</span>
+          </td>
+          <td>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Contract Signing</div>
+              <div class="task-meta">Oakhurst Insurance • Done Aug 24</div>
+            </div>
+          </td>
+          <td>
+            <span class="outcome-pill-won">🏆 Won: Oakhurst ($61.2k)</span>
+            <span class="outcome-pill-lost">❌ Lost: Bellcross</span>
+          </td>
+        </tr>
+
+        <!-- Executive 3: Saxena (Page 3 Target) -->
+        <tr class="executive-border-top">
+          <td rowspan="2" style="vertical-align: top; text-align: center; padding-top: 14px;">
+            <a href="#user-saxena" class="page-nav-badge" title="Navigate to Page 3 Details">
+              <span class="pg-num">PAGE 03</span>
+              <span class="pg-arrow">↗</span>
+            </a>
+          </td>
+          <td rowspan="2" style="vertical-align: top; padding-top: 14px;">
+            <div class="executive-card-box">
+              <span class="executive-name-text">Saxena</span>
+              <span class="executive-role-text">Account Executive</span>
+            </div>
+          </td>
+          <td><span class="product-chip">📦 EBM</span></td>
+          <td>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Initial Outreach</div>
+              <div class="task-meta">Thackeray & Sons • Due Aug 28</div>
+            </div>
+          </td>
+          <td>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Demo Walkthrough</div>
+              <div class="task-meta">Vantage Point • Done Aug 20</div>
+            </div>
+          </td>
+          <td>
+            <span style="color: #94a3b8; font-style: italic; font-size: 7.5pt;">In Progress</span>
+          </td>
+        </tr>
+        <tr class="product-row-bg">
+          <td><span class="product-chip">📦 STAR AI</span></td>
+          <td>
+            <div class="task-item-card task-item-overdue">
+              <div class="task-title">
+                <span class="overdue-text">Security Review</span>
+                <span class="badge-mini-overdue">OVERDUE</span>
+              </div>
+              <div class="task-meta overdue-text">Union Harbor Bank • Due Aug 18</div>
+            </div>
+            <div class="task-item-card task-item-pending">
+              <div class="task-title">Pilot Scoping</div>
+              <div class="task-meta">Ridgeline Credit • Due Sept 01</div>
+            </div>
+          </td>
+          <td>
+            <div class="task-item-card task-item-completed">
+              <div class="task-title">Technical Demo</div>
+              <div class="task-meta">Union Harbor Bank • Done Aug 19</div>
+            </div>
+          </td>
+          <td>
+            <span style="color: #94a3b8; font-style: italic; font-size: 7.5pt;">In Progress</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= VINOD HANDI (PAGE 1 DETAILED OVERVIEW) ================= -->
+  <div id="user-vinod-handi" class="user-section avoid-break">
+    <div class="user-header">
+      <div class="user-initials">VH</div>
+      <div class="user-details">
+        <span>Account Executive • Page 1 Detail Overview</span>
+        <h2>Vinod Handi</h2>
+      </div>
+    </div>
+
+    <!-- Product 1 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: Meglan</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">Active Account Segment</span>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-leads">📊 Lead Stage Updates</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="22%">Lead Name</th>
+              <th width="26%">Stage Change To & Date</th>
+              <th width="18%">Status & Date</th>
+              <th width="34%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="lead-name">Arden Health Systems</span><span class="lead-id">ID: LD-10312</span></td>
+              <td>
+                <span class="stage-from">Demo</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Negotiation</span>
+                <span class="date-subtext">Aug 23, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-active">Active</span>
+                <span class="date-subtext">Aug 23, 2026</span>
+              </td>
+              <td>Positive demo feedback; requesting HIPAA compliance documentation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-block avoid-break">
+        <div class="block-header header-pending">⏳ Pending Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Required</th>
+              <th width="15%">Due Date</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Arden Health Systems</td>
+              <td width="25%">Technical Demo</td>
+              <td width="15%">2026-08-30</td>
+              <td width="35%">Demo dashboard integrations for clinical operations.</td>
+            </tr>
+            <tr class="overdue-row">
+              <td class="overdue-text">Fenwick & Rowe LLP</td>
+              <td>Discovery Call</td>
+              <td class="overdue-text">2026-08-19 <span class="overdue-badge">OVERDUE</span></td>
+              <td>Understand current reporting stack and key pain points.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <div class="empty-state">No completed tasks recorded for Meglan product this week.</div>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: EBM</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">Enterprise Account Segment</span>
+      </div>
+      
+      <!-- LEAD UPDATES -->
+      <div class="data-block avoid-break">
+        <div class="block-header header-leads">📊 Lead Stage Updates</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="22%">Lead Name</th>
+              <th width="26%">Stage Change To & Date</th>
+              <th width="18%">Status & Date</th>
+              <th width="34%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="lead-name">Meridian Logistics</span><span class="lead-id">ID: LD-10231</span></td>
+              <td>
+                <span class="stage-from">Negotiation</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Contract Sent</span>
+                <span class="date-subtext">Aug 24, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-active">Active</span>
+                <span class="date-subtext">Aug 24, 2026</span>
+              </td>
+              <td>Legal team requested a revised SLA clause; sent updated contract for signature.</td>
+            </tr>
+            <tr>
+              <td><span class="lead-name">Northgate Retail Co.</span><span class="lead-id">ID: LD-10198</span></td>
+              <td>
+                <span class="stage-from">Contract Sent</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Closed</span>
+                <span class="date-subtext">Aug 22, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-won">Deal Won</span>
+                <span class="date-subtext">Aug 22, 2026</span>
+              </td>
+              <td>Signed a 2-year enterprise agreement, upsell from starter plan.</td>
+            </tr>
+            <tr>
+              <td><span class="lead-name">Baywater Freight</span><span class="lead-id">ID: LD-10240</span></td>
+              <td>
+                <span class="stage-from">Demo</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Closed</span>
+                <span class="date-subtext">Aug 21, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-lost">Lost</span>
+                <span class="date-subtext">Aug 21, 2026</span>
+              </td>
+              <td>Went with a competitor over pricing; flagged for re-engagement in Q3.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PENDING TASKS -->
+      <div class="data-block avoid-break">
+        <div class="block-header header-pending">⏳ Pending Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Required</th>
+              <th width="15%">Due Date</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="overdue-row">
+              <td class="overdue-text">Meridian Logistics</td>
+              <td>Follow-up Call</td>
+              <td class="overdue-text">2026-08-25 <span class="overdue-badge">OVERDUE</span></td>
+              <td>Confirm signature timeline with procurement lead.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Crestline Manufacturing</td>
+              <td>Proposal Review</td>
+              <td>2026-09-02</td>
+              <td>Walk through pricing tiers with finance team.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Alderwood Financial</td>
+              <td>Contract Redline</td>
+              <td>2026-08-31</td>
+              <td>Return redlined MSA with updated liability cap.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- COMPLETED TASKS -->
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Taken</th>
+              <th width="15%">Date Done</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="lead-name">Northgate Retail Co.</td>
+              <td>Contract Signing</td>
+              <td>2026-08-22</td>
+              <td>Deal closed at $84,000 ACV. Kickoff scheduled for Sept 3.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Baywater Freight</td>
+              <td>Loss Review Call</td>
+              <td>2026-08-23</td>
+              <td>Documented competitor pricing gap. Nurture sequence started.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= KAUSHIK (PAGE 2 DETAILED OVERVIEW) ================= -->
+  <div id="user-kaushik" class="user-section avoid-break">
+    <div class="user-header">
+      <div class="user-initials">K</div>
+      <div class="user-details">
+        <span>Account Executive • Page 2 Detail Overview</span>
+        <h2>Kaushik</h2>
+      </div>
+    </div>
+
+    <!-- Product 1 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: Spica</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">SaaS Product Segment</span>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-leads">📊 Lead Stage Updates</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="22%">Lead Name</th>
+              <th width="26%">Stage Change To & Date</th>
+              <th width="18%">Status & Date</th>
+              <th width="34%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="lead-name">Falcon Ridge Partners</span><span class="lead-id">ID: LD-10301</span></td>
+              <td>
+                <span class="stage-from">Qualification</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Demo</span>
+                <span class="date-subtext">Aug 18, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-active">Active</span>
+                <span class="date-subtext">Aug 18, 2026</span>
+              </td>
+              <td>Strong interest from CTO; scheduling technical deep-dive.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-block avoid-break">
+        <div class="block-header header-pending">⏳ Pending Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Required</th>
+              <th width="15%">Due Date</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="overdue-row">
+              <td width="25%" class="overdue-text">Falcon Ridge Partners</td>
+              <td width="25%">Technical Deep-Dive</td>
+              <td width="15%" class="overdue-text">2026-08-20 <span class="overdue-badge">OVERDUE</span></td>
+              <td width="35%">Cover SSO and data residency options.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Hartwell & Co.</td>
+              <td>Renewal Discussion</td>
+              <td>2026-09-05</td>
+              <td>Discuss renewal terms ahead of contract expiry.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Solstice Media</td>
+              <td>Onboarding Call</td>
+              <td>2026-08-29</td>
+              <td>Kick off onboarding with marketing ops lead.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Taken</th>
+              <th width="15%">Date Done</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Hartwell & Co.</td>
+              <td width="25%">Check-in Call</td>
+              <td width="15%">2026-08-21</td>
+              <td width="35%">Positive check-in; no blockers reported.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Solstice Media</td>
+              <td>Contract Signing</td>
+              <td>2026-08-23</td>
+              <td>New logo closed at $46,500 ACV.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: STAR AI</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">AI Core Platform Segment</span>
+      </div>
+      <div class="data-block avoid-break">
+        <div class="block-header header-leads">📊 Lead Stage Updates</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="22%">Lead Name</th>
+              <th width="26%">Stage Change To & Date</th>
+              <th width="18%">Status & Date</th>
+              <th width="34%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="lead-name">Oakhurst Insurance</span><span class="lead-id">ID: LD-10340</span></td>
+              <td>
+                <span class="stage-from">Demo</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Closed</span>
+                <span class="date-subtext">Aug 24, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-won">Deal Won</span>
+                <span class="date-subtext">Aug 24, 2026</span>
+              </td>
+              <td>Closed on annual plan; procurement approved.</td>
+            </tr>
+            <tr>
+              <td><span class="lead-name">Bellcross Retail</span><span class="lead-id">ID: LD-10344</span></td>
+              <td>
+                <span class="stage-from">Negotiation</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Closed</span>
+                <span class="date-subtext">Aug 20, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-lost">Lost</span>
+                <span class="date-subtext">Aug 20, 2026</span>
+              </td>
+              <td>Project shelved internally due to Q3 budget freeze.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Taken</th>
+              <th width="15%">Date Done</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Oakhurst Insurance</td>
+              <td width="25%">Contract Signing</td>
+              <td width="15%">2026-08-24</td>
+              <td width="35%">Deal closed at $61,200 ACV. Handoff to CS scheduled.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= SAXENA (PAGE 3 DETAILED OVERVIEW) ================= -->
+  <div id="user-saxena" class="user-section avoid-break">
+    <div class="user-header">
+      <div class="user-initials">S</div>
+      <div class="user-details">
+        <span>Account Executive • Page 3 Detail Overview</span>
+        <h2>Saxena</h2>
+      </div>
+    </div>
+
+    <!-- Product 1 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: EBM</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">Enterprise Segment</span>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-pending">⏳ Pending Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Required</th>
+              <th width="15%">Due Date</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Thackeray & Sons</td>
+              <td width="25%">Initial Outreach</td>
+              <td width="15%">2026-08-28</td>
+              <td width="35%">Send intro email referencing recent funding round.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Taken</th>
+              <th width="15%">Date Done</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Vantage Point Consulting</td>
+              <td width="25%">Demo</td>
+              <td width="15%">2026-08-20</td>
+              <td width="35%">Evaluating competitors, decision in Sept.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-group avoid-break">
+      <div class="product-title">
+        <span>📦 Product: STAR AI</span>
+        <span style="font-size: 8pt; color: #64748b; font-weight: 600;">AI Core Platform Segment</span>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-leads">📊 Lead Stage Updates</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="22%">Lead Name</th>
+              <th width="26%">Stage Change To & Date</th>
+              <th width="18%">Status & Date</th>
+              <th width="34%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="lead-name">Union Harbor Bank</span><span class="lead-id">ID: LD-10401</span></td>
+              <td>
+                <span class="stage-from">Qualification</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Demo</span>
+                <span class="date-subtext">Aug 18, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-active">Active</span>
+                <span class="date-subtext">Aug 18, 2026</span>
+              </td>
+              <td>Security team requesting SOC 2 report.</td>
+            </tr>
+            <tr>
+              <td><span class="lead-name">Ridgeline Credit Union</span><span class="lead-id">ID: LD-10405</span></td>
+              <td>
+                <span class="stage-from">Demo</span> <span class="status-arrow">&rarr;</span> <span class="stage-to">Negotiation</span>
+                <span class="date-subtext">Aug 22, 2026</span>
+              </td>
+              <td>
+                <span class="pill pill-active">Active</span>
+                <span class="date-subtext">Aug 22, 2026</span>
+              </td>
+              <td>Board approved pilot; drafting scope for a 90-day trial.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-block avoid-break">
+        <div class="block-header header-pending">⏳ Pending Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Required</th>
+              <th width="15%">Due Date</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="overdue-row">
+              <td width="25%" class="overdue-text">Union Harbor Bank</td>
+              <td width="25%">Security Review</td>
+              <td width="15%" class="overdue-text">2026-08-18 <span class="overdue-badge">OVERDUE</span></td>
+              <td width="35%">Share SOC 2 Type II report.</td>
+            </tr>
+            <tr>
+              <td class="lead-name">Ridgeline Credit Union</td>
+              <td>Pilot Scoping</td>
+              <td>2026-09-01</td>
+              <td>Finalize success metrics with IT lead.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="data-block avoid-break">
+        <div class="block-header header-completed">✅ Completed Tasks</div>
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">Lead Name</th>
+              <th width="25%">Action Taken</th>
+              <th width="15%">Date Done</th>
+              <th width="35%">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td width="25%" class="lead-name">Union Harbor Bank</td>
+              <td width="25%">Technical Demo</td>
+              <td width="15%">2026-08-19</td>
+              <td width="35%">Demo well received; escalated to security review.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARD FOOTER SIGN-OFF -->
+  <div class="board-footer-box avoid-break">
+    <div>
+      <strong>Star AI Sales Management System</strong> • Weekly Pipeline & Activity Briefing
+    </div>
+    <div>
+      Confidential • Generated for <strong>CFO & CEO Executive Review</strong>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

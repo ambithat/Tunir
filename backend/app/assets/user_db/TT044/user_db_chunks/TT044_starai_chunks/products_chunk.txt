@@ -1,0 +1,43 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        products
+
+        COLUMNS:
+        product_id, product_name, product_name_description, product_type, created_at, is_active, teams
+        
+
+RELATIONS:
+approval_order.created_at ↔ products.created_at
+employee.created_at ↔ products.created_at
+employee.is_active ↔ products.is_active
+categories.created_at ↔ products.created_at
+categories.is_active ↔ products.is_active
+location.created_at ↔ products.created_at
+location.is_active ↔ products.is_active
+products.created_at ↔ permissions.created_at
+products.created_at ↔ parts.created_at
+products.is_active ↔ parts.is_active
+products.created_at ↔ users.created_at
+products.teams ↔ users.teams
+products.is_active ↔ users.is_active
+products.created_at ↔ sale_orders.created_at
+products.product_id ↔ sale_orders.product_id
+products.created_at ↔ sale_order_items.created_at
+products.product_id ↔ sale_order_items.product_id

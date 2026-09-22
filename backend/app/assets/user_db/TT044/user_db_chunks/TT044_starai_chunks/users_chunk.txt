@@ -1,0 +1,46 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        users
+
+        COLUMNS:
+        serial_number, employee_id, role, password, is_active, level, blocked_at, blocked_by, block_reason, created_at, parent_employee_id, permission_id, teams
+        
+
+RELATIONS:
+approval_order.created_at ↔ users.created_at
+approval_order.level ↔ users.level
+employee.employee_id ↔ users.employee_id
+employee.serial_number ↔ users.serial_number
+employee.created_at ↔ users.created_at
+employee.is_active ↔ users.is_active
+categories.created_at ↔ users.created_at
+categories.is_active ↔ users.is_active
+location.created_at ↔ users.created_at
+location.is_active ↔ users.is_active
+products.created_at ↔ users.created_at
+products.teams ↔ users.teams
+products.is_active ↔ users.is_active
+permissions.permission_id ↔ users.permission_id
+permissions.created_at ↔ users.created_at
+permissions.level ↔ users.level
+parts.created_at ↔ users.created_at
+parts.is_active ↔ users.is_active
+users.created_at ↔ sale_orders.created_at
+users.created_at ↔ sale_order_items.created_at

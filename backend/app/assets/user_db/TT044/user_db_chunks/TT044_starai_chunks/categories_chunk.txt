@@ -1,0 +1,41 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        categories
+
+        COLUMNS:
+        category_id, category_code, category_name, created_at, is_active
+        
+
+RELATIONS:
+approval_order.created_at ↔ categories.created_at
+employee.created_at ↔ categories.created_at
+employee.is_active ↔ categories.is_active
+categories.created_at ↔ location.created_at
+categories.is_active ↔ location.is_active
+categories.created_at ↔ products.created_at
+categories.is_active ↔ products.is_active
+categories.created_at ↔ permissions.created_at
+categories.created_at ↔ parts.created_at
+categories.is_active ↔ parts.is_active
+categories.category_id ↔ parts.category_id
+categories.created_at ↔ users.created_at
+categories.is_active ↔ users.is_active
+categories.created_at ↔ sale_orders.created_at
+categories.created_at ↔ sale_order_items.created_at

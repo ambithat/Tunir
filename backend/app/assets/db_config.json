@@ -1,0 +1,8 @@
+{
+    "scheme": "postgresql+psycopg",
+    "host": "192.168.1.184",
+    "port": 15432,
+    "username": "Tardid",
+    "password": "Tardid",
+    "database": "star_ai"
+}

@@ -1,0 +1,38 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        permissions
+
+        COLUMNS:
+        permission_id, level, request_type, created_at
+        
+
+RELATIONS:
+approval_order.created_at ↔ permissions.created_at
+approval_order.level ↔ permissions.level
+employee.created_at ↔ permissions.created_at
+categories.created_at ↔ permissions.created_at
+location.created_at ↔ permissions.created_at
+products.created_at ↔ permissions.created_at
+permissions.created_at ↔ parts.created_at
+permissions.permission_id ↔ users.permission_id
+permissions.created_at ↔ users.created_at
+permissions.level ↔ users.level
+permissions.created_at ↔ sale_orders.created_at
+permissions.created_at ↔ sale_order_items.created_at

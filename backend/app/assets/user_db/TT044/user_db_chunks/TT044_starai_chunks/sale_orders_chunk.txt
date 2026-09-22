@@ -1,0 +1,44 @@
+
+        DATABASE CONTEXT:
+
+        This table belongs to the database.
+
+        Common user word mappings:
+        database = available tables | db = available tables | dataset = available tables
+        data = stored information   | information = stored data | details = stored data
+
+        records = table rows | entries = table rows | rows = table records
+
+        list = SELECT | show = SELECT | display = SELECT | get = SELECT
+        find = search  | search = filter
+
+        count = number of records | number = quantity/count | total = aggregation
+        sum = aggregation | maximum = MAX | max = MAX | highest = MAX
+        minimum = MIN | min = MIN | lowest = MIN | average = AVG | avg = AVG
+
+        TABLE:
+        sale_orders
+
+        COLUMNS:
+        sale_order_id, product_id, customer_name, customer_phone, customer_email, location_id, qty_ordered, unit_price, total_price, status, order_date, expected_delivery_date, dispatched_at, dispatched_by, remarks, created_at, updated_at
+        
+
+RELATIONS:
+approval_order.created_at ↔ sale_orders.created_at
+employee.created_at ↔ sale_orders.created_at
+categories.created_at ↔ sale_orders.created_at
+location.created_at ↔ sale_orders.created_at
+location.location_id ↔ sale_orders.location_id
+products.created_at ↔ sale_orders.created_at
+products.product_id ↔ sale_orders.product_id
+permissions.created_at ↔ sale_orders.created_at
+parts.created_at ↔ sale_orders.created_at
+parts.unit_price ↔ sale_orders.unit_price
+parts.updated_at ↔ sale_orders.updated_at
+users.created_at ↔ sale_orders.created_at
+login_history.status ↔ sale_orders.status
+sale_orders.updated_at ↔ sale_order_items.updated_at
+sale_orders.product_id ↔ sale_order_items.product_id
+sale_orders.created_at ↔ sale_order_items.created_at
+sale_orders.sale_order_id ↔ sale_order_items.sale_order_id
+sale_orders.unit_price ↔ sale_order_items.unit_price
