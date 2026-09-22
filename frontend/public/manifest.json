@@ -1,0 +1,77 @@
+{
+  "short_name": "TARDID CRM",
+  "name": "TARDID B2B Sales CRM Platform",
+  "id": "/?source=pwa",
+  "description": "TARDID B2B Sales CRM - Star AI Intelligence Platform",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "theme_color": "#030712",
+  "background_color": "#060B12",
+  "categories": [
+    "business",
+    "productivity",
+    "sales"
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/?source=pwa&view=dashboard",
+      "icons": [
+        {
+          "src": "/logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Lead Register",
+      "short_name": "Leads",
+      "url": "/?source=pwa&view=leads",
+      "icons": [
+        {
+          "src": "/logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

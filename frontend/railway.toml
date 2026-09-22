@@ -1,0 +1,11 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build"
+
+[deploy]
+# -s = single-page app mode (redirects 404s to index.html for React Router)
+startCommand = "npx serve -s build -l $PORT"
+healthcheckPath = "/"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
