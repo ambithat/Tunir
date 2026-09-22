@@ -213,3 +213,8 @@ yarn-debug.log*
 yarn-error.log*
 .env
 
+# Deployment documentation and local PDFs
+*.pdf
+railway deployment.pdf
+
+
