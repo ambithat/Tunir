@@ -89,9 +89,18 @@ def get_app() -> FastAPI:
     fast_app.add_middleware(ExceptionLoggingMiddleware)
     fast_app.add_exception_handler(RateLimitExceeded, rate_limit_exceed_handler)
 
+    # Mount persistent uploads directory for file access
+    upload_dir = os.getenv("UPLOAD_BASE_DIR", "/data/uploads")
+    try:
+        os.makedirs(upload_dir, exist_ok=True)
+        fast_app.mount("/static/uploads", StaticFiles(directory=upload_dir), name="uploads")
+    except Exception as mount_err:
+        logger.warning(f"Could not mount /static/uploads directory: {mount_err}")
+
     # Register local routes and custom middleware/exception handlers
     @fast_app.get("/")
     async def root():
+
         logger.info("Root endpoint called")
         return {"message": "Star AI API is running."}
 
