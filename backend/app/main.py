@@ -84,6 +84,12 @@ def get_app() -> FastAPI:
     fast_app.state.limiter = limiter
     from app.api.routes.routers import api_router
     fast_app.include_router(api_router)
+    from fastapi.staticfiles import StaticFiles
+    from app.config import settings
+    upload_dir = Path(settings.UPLOAD_BASE_DIR)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    fast_app.mount("/static/uploads", StaticFiles(directory=str(upload_dir)), name="static_uploads")
+
     fast_app.add_event_handler("startup", start_app_handler(fast_app))
     fast_app.add_event_handler("shutdown", stop_app_handler())
     from app.core.exception_logging_middleware import ExceptionLoggingMiddleware

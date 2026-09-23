@@ -1,10 +1,20 @@
 import asyncio
 from datetime import datetime
 import os
+from pathlib import Path
 from typing import Optional
 import requests
 from fastapi import UploadFile, HTTPException, status
 from app.core.config import SEAWEEDFS_FILER_URL
+from app.config import settings
+
+
+def _get_local_volume_path(relative_path: str) -> Path:
+    base_dir = Path(settings.UPLOAD_BASE_DIR)
+    clean_path = relative_path.lstrip("/\\")
+    full_path = base_dir / clean_path
+    full_path.parent.mkdir(parents=True, exist_ok=True)
+    return full_path
 
 
 def generate_seaweed_path(
@@ -14,22 +24,18 @@ def generate_seaweed_path(
     sub_folder: Optional[str] = None
 ) -> str:
     """
-    Generates a structured SeaweedFS storage path:
+    Generates a structured storage path:
     startai/proposal_sent/proposal_type/year/month/day/week/hour/min/second/filename
-
-    Example:
-    startai/proposal_sent/Technical_Proposal_Sent/2026/08/19/week_34/12/42/22/doc.pdf
     """
     now = datetime.now()
     year = now.strftime("%Y")
     month = now.strftime("%m")
     day = now.strftime("%d")
-    week = f"week_{now.strftime('%V')}"  # ISO week number
+    week = f"week_{now.strftime('%V')}"
     hour = now.strftime("%H")
     minute = now.strftime("%M")
     second = now.strftime("%S")
 
-    # Sanitize inputs
     clean_bucket = bucket_name.strip("/").replace(" ", "_")
     if clean_bucket.startswith("buckets/"):
         clean_bucket = clean_bucket[len("buckets/"):]
@@ -48,9 +54,6 @@ def generate_seaweed_path(
     return "/".join(path_parts)
 
 
-ALLOWED_CONTENT_TYPES = {"application/pdf", "image/jpeg", "image/png", "image/webp", "image/jpg", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
-MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024  # 20 MB
-
 async def upload_file_to_seaweed(
     file: UploadFile,
     bucket_name: str = "startai",
@@ -58,26 +61,13 @@ async def upload_file_to_seaweed(
     sub_folder: Optional[str] = None
 ) -> dict:
     """
-    Uploads an UploadFile directly to SeaweedFS Filer under specified bucket, folder, sub-folder and time path structure.
-    Returns file_url and db_path starting from bucket name.
+    Uploads an UploadFile to persistent volume storage and/or SeaweedFS.
+    Guarantees persistence to Railway volume at UPLOAD_BASE_DIR.
     """
     try:
-        if file.content_type not in ALLOWED_CONTENT_TYPES:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                detail=f"File type '{file.content_type}' is not allowed."
-            )
-            
         file_bytes = await file.read()
-        
         if not file_bytes:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Uploaded file is empty")
-            
-        if len(file_bytes) > MAX_FILE_SIZE_BYTES:
-            raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, 
-                detail="File size exceeds the 20MB limit."
-            )
 
         filename = file.filename or "uploaded_file"
         relative_path = generate_seaweed_path(
@@ -87,47 +77,36 @@ async def upload_file_to_seaweed(
             sub_folder=sub_folder
         )
 
-        # ── Local volume fallback (Railway /data volume or no SeaweedFS) ──────
-        if not SEAWEEDFS_FILER_URL or SEAWEEDFS_FILER_URL.strip().lower() in ("local", "http://starai.local:8888", ""):
-            from app.config import settings
-            import aiofiles
-            save_path = settings.upload_base_dir_path / relative_path
-            save_path.parent.mkdir(parents=True, exist_ok=True)
-            async with aiofiles.open(save_path, "wb") as f:
-                await f.write(file_bytes)
-            file_url = f"/uploads/{relative_path}"
-            return {
-                "message": "File saved to local volume successfully",
-                "file_url": file_url,
-                "relative_path": relative_path,
-                "db_path": relative_path,
-                "bucket_path": f"buckets/{relative_path}",
-                "bucket_name": bucket_name,
-                "filename": filename,
-                "content_type": file.content_type,
-                "size_bytes": len(file_bytes)
-            }
-        # ─────────────────────────────────────────────────────────────────────
+        # 1. Always save to local volume (/data/uploads)
+        local_path = _get_local_volume_path(relative_path)
+        with open(local_path, "wb") as f:
+            f.write(file_bytes)
 
-        upload_url = f"{SEAWEEDFS_FILER_URL.rstrip('/')}/buckets/{relative_path}"
+        file_url = f"/static/uploads/{relative_path}"
 
-        def _perform_upload():
-            response = requests.post(
-                upload_url,
-                files={"file": (filename, file_bytes, file.content_type or "application/octet-stream")},
-                timeout=15.0
-            )
-            return response
+        # 2. If valid remote SeaweedFS URL is provided, also push to SeaweedFS
+        filer_url = (SEAWEEDFS_FILER_URL or "").strip()
+        if filer_url.startswith(("http://", "https://")) and "starai.local" not in filer_url:
+            try:
+                upload_url = f"{filer_url.rstrip('/')}/buckets/{relative_path}"
 
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(None, _perform_upload)
+                def _perform_upload():
+                    return requests.post(
+                        upload_url,
+                        files={"file": (filename, file_bytes, file.content_type or "application/octet-stream")},
+                        timeout=5.0
+                    )
 
-        if response.status_code not in (200, 201):
-            raise RuntimeError(f"SeaweedFS upload failed with status {response.status_code}: {response.text}")
+                loop = asyncio.get_event_loop()
+                response = await loop.run_in_executor(None, _perform_upload)
+                if response.status_code in (200, 201):
+                    file_url = upload_url
+            except Exception as e:
+                print(f"[SeaweedFS Warning] Remote sync skipped, saved to volume: {e}")
 
         return {
-            "message": "File uploaded to SeaweedFS successfully",
-            "file_url": upload_url,
+            "message": "File uploaded successfully",
+            "file_url": file_url,
             "relative_path": relative_path,
             "db_path": relative_path,
             "bucket_path": f"buckets/{relative_path}",
@@ -137,13 +116,12 @@ async def upload_file_to_seaweed(
             "size_bytes": len(file_bytes)
         }
 
-
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error uploading file to SeaweedFS: {str(e)}"
+            detail=f"Error uploading file: {str(e)}"
         )
 
 
@@ -155,8 +133,7 @@ async def upload_bytes_to_seaweed(
     sub_folder: Optional[str] = None
 ) -> dict:
     """
-    Uploads raw file bytes directly to SeaweedFS Filer under specified bucket, folder, and time structure.
-    Returns file_url and upload metadata dict.
+    Uploads raw file bytes to volume storage and/or SeaweedFS.
     """
     try:
         if not file_bytes:
@@ -169,25 +146,36 @@ async def upload_bytes_to_seaweed(
             folder_name=folder_name,
             sub_folder=sub_folder
         )
-        upload_url = f"{SEAWEEDFS_FILER_URL.rstrip('/')}/buckets/{relative_path}"
 
-        def _perform_upload():
-            response = requests.post(
-                upload_url,
-                files={"file": (clean_filename, file_bytes, "application/pdf")},
-                timeout=15.0
-            )
-            return response
+        # Save to local volume
+        local_path = _get_local_volume_path(relative_path)
+        with open(local_path, "wb") as f:
+            f.write(file_bytes)
 
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(None, _perform_upload)
+        file_url = f"/static/uploads/{relative_path}"
 
-        if response.status_code not in (200, 201):
-            raise RuntimeError(f"SeaweedFS upload failed with status {response.status_code}: {response.text}")
+        filer_url = (SEAWEEDFS_FILER_URL or "").strip()
+        if filer_url.startswith(("http://", "https://")) and "starai.local" not in filer_url:
+            try:
+                upload_url = f"{filer_url.rstrip('/')}/buckets/{relative_path}"
+
+                def _perform_upload():
+                    return requests.post(
+                        upload_url,
+                        files={"file": (clean_filename, file_bytes, "application/pdf")},
+                        timeout=5.0
+                    )
+
+                loop = asyncio.get_event_loop()
+                response = await loop.run_in_executor(None, _perform_upload)
+                if response.status_code in (200, 201):
+                    file_url = upload_url
+            except Exception as e:
+                print(f"[SeaweedFS Warning] Remote sync skipped: {e}")
 
         return {
-            "message": "File uploaded to SeaweedFS successfully",
-            "file_url": upload_url,
+            "message": "File uploaded successfully",
+            "file_url": file_url,
             "relative_path": relative_path,
             "db_path": relative_path,
             "bucket_path": f"buckets/{relative_path}",
@@ -202,31 +190,38 @@ async def upload_bytes_to_seaweed(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error uploading bytes to SeaweedFS: {str(e)}"
+            detail=f"Error uploading bytes: {str(e)}"
         )
 
 
 async def download_file_from_seaweed(relative_path: str) -> bytes:
     """
-    Downloads file bytes from SeaweedFS using the relative path.
+    Downloads file bytes from local volume storage or SeaweedFS.
     """
     try:
         if not relative_path:
             raise ValueError("relative_path cannot be empty")
-            
-        download_url = f"{SEAWEEDFS_FILER_URL.rstrip('/')}/buckets/{relative_path}"
 
-        def _perform_download():
-            response = requests.get(download_url, timeout=15.0)
-            return response
+        # 1. Check local persistent volume first
+        local_path = _get_local_volume_path(relative_path)
+        if local_path.exists() and local_path.is_file():
+            return local_path.read_bytes()
 
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(None, _perform_download)
+        # 2. Check SeaweedFS if configured
+        filer_url = (SEAWEEDFS_FILER_URL or "").strip()
+        if filer_url.startswith(("http://", "https://")):
+            download_url = f"{filer_url.rstrip('/')}/buckets/{relative_path}"
 
-        if response.status_code not in (200, 201):
-            raise RuntimeError(f"SeaweedFS download failed with status {response.status_code}: {response.text}")
+            def _perform_download():
+                return requests.get(download_url, timeout=10.0)
 
-        return response.content
-        
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(None, _perform_download)
+            if response.status_code in (200, 201):
+                return response.content
+
+        raise FileNotFoundError(f"File not found at path: {relative_path}")
+
     except Exception as e:
-        raise RuntimeError(f"Error downloading from SeaweedFS: {str(e)}")
+        raise RuntimeError(f"Error downloading file: {str(e)}")
+
