@@ -1,4 +1,3 @@
-from cv2.gapi import parseSSD
 import json
 from typing import  Optional,List
 from sqlalchemy.ext.asyncio import AsyncSession
