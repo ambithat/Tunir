@@ -18,9 +18,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    op.execute("CREATE SCHEMA IF NOT EXISTS sales;")
     op.execute("""
-    CREATE SCHEMA IF NOT EXISTS sales;
-
     CREATE TABLE IF NOT EXISTS sales.mail_events (
         id SERIAL PRIMARY KEY,
         event_type VARCHAR(50) NOT NULL,
@@ -32,9 +31,9 @@ def upgrade() -> None:
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated_at TIMESTAMP WITH TIME ZONE
     );
-
-    ALTER TABLE sales.mail_events ADD COLUMN IF NOT EXISTS response_payload JSONB;
-
+    """)
+    op.execute("ALTER TABLE sales.mail_events ADD COLUMN IF NOT EXISTS response_payload JSONB;")
+    op.execute("""
     CREATE TABLE IF NOT EXISTS sales.weekly_pdf_register (
         weekly_pdf_id VARCHAR(50) PRIMARY KEY,
         report_date DATE NOT NULL,
@@ -48,7 +47,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute("""
-    ALTER TABLE sales.mail_events DROP COLUMN IF EXISTS response_payload;
-    """)
+    op.execute("ALTER TABLE sales.mail_events DROP COLUMN IF EXISTS response_payload;")
+
 
