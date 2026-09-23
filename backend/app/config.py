@@ -59,34 +59,40 @@ class Settings(BaseSettings):
     }
 
     
-    BASE_STORAGE_DIR: str
+    BASE_STORAGE_DIR: str = "/data"
     JWT_SECRET_KEY: str = "default_unsafe_secret_key_change_me_in_production"
 
-    DB_ENCRYPTION_KEY: str
+    DB_ENCRYPTION_KEY: str = ""
     DB_ENCRYPTION_KEY_LEGACY: Optional[str] = None
-    SCHEMA_FILE: str
-    STAR_AI_SCHEMA_FILE: str
-    SQL_DB_PATH: str
-    CHUNK_SAVE_DIR: str
-    STAR_AI_CHUNK_SAVE_DIR: str
-    VECTORSTORE_PATH: str
-    STAR_AI_VECTORSTORE_PATH:str
-    EMBED_MODEL: str
-    LLAMA_MODEL_NAME: str
-    RETRIEVER_K: int
-    WARMUP_PAYLOAD: str
-    MAX_RETRY:int
-    
-    GROQ_API_KEY_1: str
-    GROQ_API_KEY_2: str
-    GROQ_API_KEY_3: str
 
+    # ── Llama / AI model paths (Optional — only needed if using local AI features) ──
+    SCHEMA_FILE: str = "/data/schema.json"
+    STAR_AI_SCHEMA_FILE: str = "/data/star_ai_schema.json"
+    SQL_DB_PATH: str = "/data/sql.db"
+    CHUNK_SAVE_DIR: str = "/data/chunks"
+    STAR_AI_CHUNK_SAVE_DIR: str = "/data/star_ai_chunks"
+    VECTORSTORE_PATH: str = "/data/vectorstore"
+    STAR_AI_VECTORSTORE_PATH: str = "/data/star_ai_vectorstore"
+    EMBED_MODEL: Optional[str] = None
+    LLAMA_MODEL_NAME: Optional[str] = None
+    RETRIEVER_K: int = 5
+    WARMUP_PAYLOAD: Optional[str] = None
+    MAX_RETRY: int = 3
 
+    # ── Groq API Keys (Optional — only needed for AI chat features) ──────────
+    GROQ_API_KEY_1: Optional[str] = None
+    GROQ_API_KEY_2: Optional[str] = None
+    GROQ_API_KEY_3: Optional[str] = None
 
+    # ── Token / Auth settings ─────────────────────────────────────────────────
+    # TOKEN_PRIVATE_KEY_FILE and TOKEN_PUBLIC_KEY_FILE are NOT needed
+    # since we use symmetric JWT (HS256) with JWT_SECRET_KEY
     ACCESS_TOKEN_EXPIRE_MINUTES: Optional[int] = 1
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60
-    REFRESH_TOKEN_EXPIRE_DAYS: int
-    MAX_SESSIONS:int
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    MAX_SESSIONS: int = 3
+
+
 
     LOG_ERROR_FILE_PATH: str = "app/logs/error.log"
     LOG_API_FILE_PATH: str = "app/logs/app.log"
