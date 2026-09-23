@@ -1,5 +1,3 @@
-from prompt_toolkit import formatted_text
-from pydantic import error_wrappers
 import uuid
 from typing import  Optional,List
 from sqlalchemy.ext.asyncio import AsyncSession
