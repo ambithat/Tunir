@@ -727,6 +727,14 @@ async def check_missed_job_from_apscheduler_table() -> None:
         now_ts = datetime.now().timestamp()
 
         async with session_factory() as session:
+            table_check = await session.execute(
+                text("SELECT to_regclass('sales.apscheduler_jobs');")
+            )
+            table_name = table_check.scalar()
+            if not table_name:
+                logger.info("[WeeklyReportService] sales.apscheduler_jobs table not created yet (first run). Will be initialized on scheduler start.")
+                return
+
             result = await session.execute(
                 text("SELECT next_run_time FROM sales.apscheduler_jobs WHERE id = 'weekly_executive_pdf_report'")
             )
@@ -744,7 +752,7 @@ async def check_missed_job_from_apscheduler_table() -> None:
                 else:
                     logger.info("[WeeklyReportService] No missed scheduled runs found in sales.apscheduler_jobs.")
     except Exception as err:
-        logger.error(f"[WeeklyReportService Error] Failed to check sales.apscheduler_jobs for missed runs: {err}")
+        logger.warning(f"[WeeklyReportService] Missed job check skipped: {err}")
 
 
 _weekly_scheduler: Optional[Any] = None
