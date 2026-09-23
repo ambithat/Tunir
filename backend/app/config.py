@@ -59,44 +59,42 @@ class Settings(BaseSettings):
     }
 
     
-    BASE_STORAGE_DIR: str
-    TOKEN_PRIVATE_KEY_FILE: str
-    TOKEN_PUBLIC_KEY_FILE: str
+    BASE_STORAGE_DIR: str = "/data"
+    JWT_SECRET_KEY: str = "default_unsafe_secret_key_change_me_in_production"
 
-    DB_ENCRYPTION_KEY: str
+    TOKEN_PRIVATE_KEY_FILE: Optional[str] = None
+    TOKEN_PUBLIC_KEY_FILE: Optional[str] = None
+
+    DB_ENCRYPTION_KEY: str = ""
     DB_ENCRYPTION_KEY_LEGACY: Optional[str] = None
-    SCHEMA_FILE: str
-    STAR_AI_SCHEMA_FILE: str
-    SQL_DB_PATH: str
-    CHUNK_SAVE_DIR: str
-    STAR_AI_CHUNK_SAVE_DIR: str
-    VECTORSTORE_PATH: str
-    STAR_AI_VECTORSTORE_PATH:str
-    EMBED_MODEL: str
-    LLAMA_MODEL_NAME: str
-    RETRIEVER_K: int
-    WARMUP_PAYLOAD: str
-    MAX_RETRY:int
-    
-    GROQ_API_KEY_1: str
-    GROQ_API_KEY_2: str
-    GROQ_API_KEY_3: str
 
+    # ── Llama / AI model paths (Optional — with defaults for /data volume) ──
+    SCHEMA_FILE: str = "/data/schema.json"
+    STAR_AI_SCHEMA_FILE: str = "/data/star_ai_schema.json"
+    SQL_DB_PATH: str = "/data/sql.db"
+    CHUNK_SAVE_DIR: str = "/data/chunks"
+    STAR_AI_CHUNK_SAVE_DIR: str = "/data/star_ai_chunks"
+    VECTORSTORE_PATH: str = "/data/vectorstore"
+    STAR_AI_VECTORSTORE_PATH: str = "/data/star_ai_vectorstore"
+    EMBED_MODEL: Optional[str] = None
+    LLAMA_MODEL_NAME: Optional[str] = None
+    RETRIEVER_K: int = 5
+    WARMUP_PAYLOAD: Optional[str] = None
+    MAX_RETRY: int = 3
 
+    # ── Groq API Keys (Optional) ─────────────────────────────────────────────
+    GROQ_API_KEY_1: Optional[str] = None
+    GROQ_API_KEY_2: Optional[str] = None
+    GROQ_API_KEY_3: Optional[str] = None
 
+    # ── Token / Auth settings ─────────────────────────────────────────────────
     ACCESS_TOKEN_EXPIRE_MINUTES: Optional[int] = 1
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60
-    REFRESH_TOKEN_EXPIRE_DAYS: int
-    MAX_SESSIONS:int
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    MAX_SESSIONS: int = 3
 
     LOG_ERROR_FILE_PATH: str = "app/logs/error.log"
     LOG_API_FILE_PATH: str = "app/logs/app.log"
-
-    # POSTGRES_USER: str
-    # POSTGRES_PASSWORD: str
-    # POSTGRES_HOST: str
-    # POSTGRES_DB: str
-
 
     DATABASE_URL: Optional[PostgresDsn] = None
 
@@ -107,8 +105,6 @@ class Settings(BaseSettings):
     POSTGRES_DB: Optional[str] = None
     POSTGRES_PORT: Optional[int] = 15432
 
-
-
     # Sql Query Agent 
     QUERY_AGENT_HOST: str = ""
     QUERY_AGENT_PORT: str = ""
@@ -116,62 +112,30 @@ class Settings(BaseSettings):
     QUERY_AGENT_USER: str = ""
     QUERY_AGENT_PASSWORD: str = ""
     QUERY_AGENT_SCHEME: str = ""
-    CONFIG_PATH:Path = Path("app/assets/db_config.json")
+    CONFIG_PATH: Path = Path("app/assets/db_config.json")
     IMAGE_EXTENSIONS: ClassVar[Set[str]] = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-    UPLOAD_BASE_DIR : str
-
-
+    UPLOAD_BASE_DIR: str = "/data/uploads"
 
     @computed_field
     @property
     def asyncpg_url(self) -> PostgresDsn:
         """
-        This is a computed field that generates a PostgresDsn URL for asyncpg.
-
-        The URL is built using the MultiHostUrl.build method, which takes the following parameters:
-        - scheme: The scheme of the URL. In this case, it is "postgresql+asyncpg".
-        - username: The username for the Postgres database, retrieved from the POSTGRES_USER environment variable.
-        - password: The password for the Postgres database, retrieved from the POSTGRES_PASSWORD environment variable.
-        - host: The host of the Postgres database, retrieved from the POSTGRES_HOST environment variable.
-        - path: The path of the Postgres database, retrieved from the POSTGRES_DB environment variable.
-
-        Returns:
-            PostgresDsn: The constructed PostgresDsn URL for asyncpg.
-        ------------------------------------------------------------------------------------------------------------------
         Computes the asyncpg database URL.
-
-        If a complete DATABASE_URL is provided as an environment variable (standard for production),
-        it will be used directly.
-
-        Otherwise, it constructs the URL from the individual POSTGRES_* variables
-        (standard for local development with a .env file).
-
-
         """
-   
-        
-        
         if self.DATABASE_URL:
-            # In production (Fly.io), DATABASE_URL is already a complete DSN.
-            # We just need to ensure the scheme is correct for asyncpg.
-            return MultiHostUrl.build(
-                scheme="postgresql+asyncpg",
-                username=self.DATABASE_URL.username,
-                password=self.DATABASE_URL.password,
-                host=self.DATABASE_URL.host,
-                port=self.DATABASE_URL.port,
-                path=self.DATABASE_URL.path,
-            )
+            db_url_str = str(self.DATABASE_URL)
+            db_url_str = db_url_str.replace("postgresql://", "postgresql+asyncpg://", 1)
+            db_url_str = db_url_str.replace("postgres://", "postgresql+asyncpg://", 1)
+            return MultiHostUrl(db_url_str)
 
-        elif all([self.POSTGRES_USER, self.POSTGRES_PASSWORD, self.POSTGRES_HOST, self.POSTGRES_DB,self.POSTGRES_PORT]):
-            # In local development, build the URL from the .env file parts.
+        elif all([self.POSTGRES_USER, self.POSTGRES_PASSWORD, self.POSTGRES_HOST, self.POSTGRES_DB, self.POSTGRES_PORT]):
             return MultiHostUrl.build(
                 scheme="postgresql+asyncpg",
                 username=self.POSTGRES_USER,
                 password=self.POSTGRES_PASSWORD,
                 host=self.POSTGRES_HOST,
                 port=self.POSTGRES_PORT,
-                path=f"{self.POSTGRES_DB}", # Path needs a leading slash
+                path=f"{self.POSTGRES_DB}",
             )
         else:
             raise ValueError("Database configuration is incomplete. Either provide DATABASE_URL or all POSTGRES_* variables.")
