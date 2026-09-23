@@ -123,7 +123,7 @@ class Settings(BaseSettings):
     QUERY_AGENT_SCHEME: str = ""
     CONFIG_PATH:Path = Path("app/assets/db_config.json")
     IMAGE_EXTENSIONS: ClassVar[Set[str]] = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-    UPLOAD_BASE_DIR : str
+    UPLOAD_BASE_DIR: str = "/data/uploads"
 
 
 
