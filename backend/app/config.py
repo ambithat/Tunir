@@ -59,34 +59,34 @@ class Settings(BaseSettings):
     }
 
     
-    BASE_STORAGE_DIR: str = "app/assets/storage"
+    BASE_STORAGE_DIR: str
     JWT_SECRET_KEY: str = "default_unsafe_secret_key_change_me_in_production"
 
-    DB_ENCRYPTION_KEY: str = "default_encryption_key"
+    DB_ENCRYPTION_KEY: str
     DB_ENCRYPTION_KEY_LEGACY: Optional[str] = None
-    SCHEMA_FILE: str = "app/assets/schema.json"
-    STAR_AI_SCHEMA_FILE: str = "app/assets/star_ai_schema.json"
-    SQL_DB_PATH: str = "/data"
-    CHUNK_SAVE_DIR: str = "/data/chunks"
-    STAR_AI_CHUNK_SAVE_DIR: str = "/data/star_ai_chunks"
-    VECTORSTORE_PATH: str = "/data/vectorstore"
-    STAR_AI_VECTORSTORE_PATH: str = "/data/star_ai_vectorstore"
-    EMBED_MODEL: str = "all-MiniLM-L6-v2"
-    LLAMA_MODEL_NAME: str = "llama3-8b-8192"
-    RETRIEVER_K: int = 4
-    WARMUP_PAYLOAD: str = ""
-    MAX_RETRY: int = 3
+    SCHEMA_FILE: str
+    STAR_AI_SCHEMA_FILE: str
+    SQL_DB_PATH: str
+    CHUNK_SAVE_DIR: str
+    STAR_AI_CHUNK_SAVE_DIR: str
+    VECTORSTORE_PATH: str
+    STAR_AI_VECTORSTORE_PATH:str
+    EMBED_MODEL: str
+    LLAMA_MODEL_NAME: str
+    RETRIEVER_K: int
+    WARMUP_PAYLOAD: str
+    MAX_RETRY:int
     
-    GROQ_API_KEY_1: Optional[str] = ""
-    GROQ_API_KEY_2: Optional[str] = ""
-    GROQ_API_KEY_3: Optional[str] = ""
+    GROQ_API_KEY_1: str
+    GROQ_API_KEY_2: str
+    GROQ_API_KEY_3: str
 
 
 
     ACCESS_TOKEN_EXPIRE_MINUTES: Optional[int] = 1
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    MAX_SESSIONS: int = 5
+    REFRESH_TOKEN_EXPIRE_DAYS: int
+    MAX_SESSIONS:int
 
     LOG_ERROR_FILE_PATH: str = "app/logs/error.log"
     LOG_API_FILE_PATH: str = "app/logs/app.log"
@@ -117,8 +117,7 @@ class Settings(BaseSettings):
     QUERY_AGENT_SCHEME: str = ""
     CONFIG_PATH:Path = Path("app/assets/db_config.json")
     IMAGE_EXTENSIONS: ClassVar[Set[str]] = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-    UPLOAD_BASE_DIR: str = "/data/uploads"
-
+    UPLOAD_BASE_DIR : str
 
 
 
@@ -152,18 +151,16 @@ class Settings(BaseSettings):
         
         
         if self.DATABASE_URL:
-            # In production (Fly.io), DATABASE_URL is already a complete DSN.
-            # We just need to ensure the scheme is correct for asyncpg.
-            return MultiHostUrl.build(
-                scheme="postgresql+asyncpg",
-                username=self.DATABASE_URL.username,
-                password=self.DATABASE_URL.password,
-                host=self.DATABASE_URL.host,
-                port=self.DATABASE_URL.port,
-                path=self.DATABASE_URL.path,
-            )
+            # In production (Railway), DATABASE_URL is a complete DSN string.
+            # Pydantic v2 PostgresDsn does NOT expose .username/.password as direct
+            # attributes — so we convert the URL string directly instead.
+            db_url_str = str(self.DATABASE_URL)
+            # Railway injects "postgresql://" or "postgres://" — replace with asyncpg scheme
+            db_url_str = db_url_str.replace("postgresql://", "postgresql+asyncpg://", 1)
+            db_url_str = db_url_str.replace("postgres://", "postgresql+asyncpg://", 1)
+            return MultiHostUrl(db_url_str)
 
-        elif all([self.POSTGRES_USER, self.POSTGRES_PASSWORD, self.POSTGRES_HOST, self.POSTGRES_DB,self.POSTGRES_PORT]):
+        elif all([self.POSTGRES_USER, self.POSTGRES_PASSWORD, self.POSTGRES_HOST, self.POSTGRES_DB, self.POSTGRES_PORT]):
             # In local development, build the URL from the .env file parts.
             return MultiHostUrl.build(
                 scheme="postgresql+asyncpg",
@@ -171,10 +168,11 @@ class Settings(BaseSettings):
                 password=self.POSTGRES_PASSWORD,
                 host=self.POSTGRES_HOST,
                 port=self.POSTGRES_PORT,
-                path=f"{self.POSTGRES_DB}", # Path needs a leading slash
+                path=f"{self.POSTGRES_DB}",
             )
         else:
             raise ValueError("Database configuration is incomplete. Either provide DATABASE_URL or all POSTGRES_* variables.")
+
 
     @computed_field(return_type=SAURL)
     @property
